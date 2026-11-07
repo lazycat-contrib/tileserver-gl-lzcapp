@@ -1,0 +1,36 @@
+application:
+  subdomain: tileserver-gl
+  multi_instance: false
+  # tileserver-gl has no user accounts or login page at all; exposing it via
+  # public_path would let anyone with the URL browse/upload-free tile data,
+  # so the platform entry gate stays the only auth layer (dufs/goshs precedent).
+  upstreams:
+    - location: /package-licenses/
+      backend: file:///lzcapp/pkg/content/licenses/
+    - location: /
+      backend: http://tileserver-gl:8080/
+
+services:
+  tileserver-gl:
+    # upstream: maptiler/tileserver-gl:v5.7.0 (official image)
+    image: docker.1ms.run/maptiler/tileserver-gl:v5.7.0
+    binds:
+      - /lzcapp/var/data:/data
+
+usage: |
+  TileServer GL 是一个地图瓦片服务器：把 MBTiles 离线瓦片包和 MapLibre 样式
+  发布成标准的栅格/矢量瓦片服务（WMTS/TXYZ），自带地图预览页。
+
+  使用方法：
+  1. 把 .mbtiles 瓦片包（可从 openmaptiles.org 等渠道下载）放进
+     应用数据目录 /lzcapp/var/data。
+  2. 打开应用即可看到瓦片列表和内置地图预览；各瓦片的 WMTS/TXYZ 服务
+     地址可直接给其他地图应用（如 MapLibre 客户端）使用。
+  3. 需要自定义样式或端口级配置时，在数据目录放置 config.json（见官方文档）。
+
+  数据与安全：
+  - 应用本身没有账号体系，本包不对外开放未登录访问（保持平台入口鉴权）。
+  - 瓦片数据保存在 /lzcapp/var/data，卸载应用会一并删除，请定期备份。
+
+  说明：
+  - 本包未做实机验证，功能以官方文档为准，遇到问题请反馈。
