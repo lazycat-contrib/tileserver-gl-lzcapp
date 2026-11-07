@@ -9,14 +9,12 @@ application:
       backend: file:///lzcapp/pkg/content/licenses/
     - location: /
       backend: http://tileserver-gl:8080/
-
 services:
   tileserver-gl:
-    # upstream: maptiler/tileserver-gl:v5.7.0 (official image)
+    # upstream: maptiler/tileserver-gl:v5.7.0
     image: docker.1ms.run/maptiler/tileserver-gl:v5.7.0
     binds:
       - /lzcapp/var/data:/data
-
 usage: |
   TileServer GL 是一个地图瓦片服务器：把 MBTiles 离线瓦片包和 MapLibre 样式
   发布成标准的栅格/矢量瓦片服务（WMTS/TXYZ），自带地图预览页。
